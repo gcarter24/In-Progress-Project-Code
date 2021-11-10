@@ -45,6 +45,31 @@ def random
   # final_params = { year: params[:year] || nil, rating: params[:rating] || nil, language: params[:language] || nil, runtime_minutes: params[:runtime_minutes] || nil, media_type: params[:media_type] || nil, networks: { name: params[:network] || nil }, genres: { name: params[:genre] || nil } }
 
   # @final_movie = Movie.includes(:genres, :networks).where(final_params.compact).sample
+
+  # ****** ADDED 11/09/2021 **********
+  @genres = Genre.all
+  @networks = Network.all
+
+  # ALL INFO IN ONE HASH OF ARRAYS
+
+  final_genres = @genres.map do |genre|
+    {
+      id: genre.id,
+      name: genre.name,
+    }
+  end
+  media_types = Movie.all.map { |movie| movie.media_type }.uniq
+  languages = Movie.all.map { |movie| movie.language }.uniq
+  ratings = Movie.all.map { |movie| movie.rating }.uniq
+  years = Movie.order(year: :desc).all.map { |movie| movie.year }.uniq
+  lengths = Movie.order(runtime_minutes: :desc).all.map { |movie| movie.runtime_minutes }.uniq
+  final_networks = @networks.map do |network|
+    {
+      id: network.id,
+      name: network.name,
+    }
+  end
+  { genres: final_genres, networks: final_networks, media_types: media_types, lengths: lengths, ratings: ratings, years: years, languages: languages }
 end
 
 def test
